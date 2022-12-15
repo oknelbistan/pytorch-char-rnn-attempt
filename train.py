@@ -4,8 +4,7 @@ import numpy as np
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from model import Model
-# from dataset import Dataset
-from utils import Dataset
+from dataset import Dataset
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu' 
 

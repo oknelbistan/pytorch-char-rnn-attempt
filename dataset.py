@@ -1,34 +1,33 @@
 import torch
 from collections import Counter
-
+from torch.nn import functional as F
+    
+        
 class Dataset(torch.utils.data.Dataset):
     def __init__(self,args):
         
         self.args = args
-        self.words = self.load_words()
-        self.uniq_words = self.get_uniq_words()
+        self.text = self.load_text()
+        self.chars = self.get_uniq_char()
         
-        
-        self.stoi = {_str : idx + 1 for idx, _str in enumerate(self.uniq_words)}
+        self.stoi = {_str : idx + 1 for idx, _str in enumerate(self.chars)}
         self.itos = {idx : _str for _str, idx in self.stoi.items()}
+
+        # all char in the text converted
+        self.char_index = [self.stoi[char] for char in self.text]
         
-        self.words_index = [self.stoi[word] for word in self.words]
         
-        
-    def load_words(self):
+    def load_text(self):
         with open('input.txt', "r", encoding="utf-8") as file:
             
-            shakespeare_text = file.read().lower().split()
+            shakespeare_text = "".join(file.read().lower())
             
         return shakespeare_text
-    
-    def padding(self):
-        pass
         
-    def get_uniq_words(self):
+    def get_uniq_char(self):
                 
-        word_counts = Counter(self.words)
-        return sorted(word_counts, key=word_counts.get, reverse=True)
+        char_counts = Counter(self.text)
+        return sorted(char_counts, key=char_counts.get, reverse=True)
     
     def encoder(self, sample):
         return torch.tensor([self.stoi[char] for char in sample])
@@ -37,35 +36,33 @@ class Dataset(torch.utils.data.Dataset):
         return ' '.join([self.itos[char] for char in sample])
     
     def __len__(self):
-        return len(self.load_words())
+        return len(self.load_text())
     
     def __getitem__(self, index=0):
         
         
-        return(
-            torch.tensor(self.words_index[index:index+self.args.sequence_length]),
-            torch.tensor(self.words_index[index+1:index+self.args.sequence_length+1]),  
-        )
+        inpt = torch.tensor(self.char_index[index:index+self.args.sequence_length])
+        target = torch.tensor(self.char_index[index+1:index+self.args.sequence_length+1])
+
+        
+        return (inpt, target)
 
 
-
-
-class Args():
-    def __init__(self, sequence_length):
-        self.sequence_length = sequence_length
+# class Args():
+#     def __init__(self, sequence_length):
+#         self.sequence_length = sequence_length
         
         
-args = Args(sequence_length=11)
-dtset = Dataset(args=args)
+# args = Args(sequence_length=5)
+# dtset = Dataset(args=args)
 
 
-#dtset.__getitem__()
-# dtset.__len__()
-#dtset.get_uniq_words()
-# dtset.char_index[:20]
-#print(dtset.stoi)
+# dtset.__getitem__()
+# # dtset.__len__()
+# dtset.get_uniq_char()
+# # dtset.char_index[:20]
+# print(dtset.stoi)
+# print(dtset.itos)
 
-
-# dtset.words_index
-print(dtset.encoder('first'))
-print(dtset.decoder([20,6,9,8,3]))
+# print(dtset.encoder('first'))
+# print(dtset.decoder([20,6,9,8,3]))

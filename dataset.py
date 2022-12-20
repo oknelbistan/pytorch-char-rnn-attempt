@@ -41,28 +41,28 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(self, index=0):
         
         
-        inpt = torch.tensor(self.char_index[index:index+self.args.sequence_length])
-        target = torch.tensor(self.char_index[index+1:index+self.args.sequence_length+1])
+        inpt = torch.tensor(self.char_index[index:index+self.args.sequence_length], dtype=torch.long)
+        target = torch.tensor(self.char_index[index+1:index+self.args.sequence_length+1], dtype=torch.long)
 
         
         return (inpt, target)
 
 
-# class Args():
-#     def __init__(self, sequence_length):
-#         self.sequence_length = sequence_length
+class Args():
+    def __init__(self, sequence_length):
+        self.sequence_length = sequence_length
         
         
-# args = Args(sequence_length=5)
-# dtset = Dataset(args=args)
+args = Args(sequence_length=5)
+dtset = Dataset(args=args)
 
 
-# dtset.__getitem__()
-# # dtset.__len__()
-# dtset.get_uniq_char()
-# # dtset.char_index[:20]
-# print(dtset.stoi)
-# print(dtset.itos)
+dtset.__getitem__()
+# dtset.__len__()
+dtset.get_uniq_char()
+# dtset.char_index[:20]
+print(dtset.stoi)
+print(dtset.itos)
 
-# print(dtset.encoder('first'))
-# print(dtset.decoder([20,6,9,8,3]))
+print(dtset.encoder('first'))
+print(dtset.decoder([20,6,9,8,3]))

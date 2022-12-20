@@ -32,8 +32,8 @@ def train(dataset, net, args):
             y_pred, (state_h, state_c) = net(x, (state_h, state_c))
             loss = criterion(y_pred.transpose(1,2), y)
             
-            state_h = state_h.detach()
-            state_c = state_c.detach()
+            #state_h = state_h.detach()
+            #state_c = state_c.detach()
             
             loss.backward()
             optimizer.step()

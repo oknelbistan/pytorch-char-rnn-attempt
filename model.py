@@ -24,17 +24,17 @@ class Model(nn.Module):
             input_size=self.input_size,
             hidden_size=self.hidden_size,
             num_layers = self.num_layers,
-            batch_first = True,
-            dropout = 0.2)
+            batch_first = True
+            )
         
         
         self.fc = nn.Linear(self.hidden_size, self.input_size)
         
     def forward(self, x, prev_state):
         embed = self.embed(x)
-        output, (state_h, state_c) = self.LSTM(embed, prev_state)
+        output, (state_h, state_c) = self.LSTM(embed.unsqueeze(1), prev_state)
                 
-        logits = self.fc(output)
+        logits = self.fc(output.reshape(output.shape[0], -1))
         
         return logits, (state_h, state_c)
 

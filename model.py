@@ -1,6 +1,6 @@
 import torch
 from torch import nn 
-
+import torch.functional as F
 
 
 class Model(nn.Module):
@@ -30,15 +30,15 @@ class Model(nn.Module):
         
         self.fc = nn.Linear(self.hidden_size, self.input_size)
         
-    def forward(self, x, prev_state):
+    def forward(self, x, hidden):
         embed = self.embed(x)
-        output, (state_h, state_c) = self.LSTM(embed.unsqueeze(1), prev_state)
-                
-        logits = self.fc(output.reshape(output.shape[0], -1))
+        output, hidden = self.LSTM(embed, hidden)
         
-        return logits, (state_h, state_c)
+        output = output.contiguous().view(-1, self.hidden_size)
+        output = self.fc(output)
+        return output, hidden
 
-    def init_state(self, sequence_lenght):
+    def init_state(self, batch_size):
         return(
-        torch.zeros(self.num_layers, sequence_lenght , self.hidden_size),
-        torch.zeros(self.num_layers, sequence_lenght , self.hidden_size))
+        torch.zeros(self.num_layers, batch_size , self.hidden_size),
+        torch.zeros(self.num_layers, batch_size , self.hidden_size))

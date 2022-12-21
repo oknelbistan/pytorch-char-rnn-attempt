@@ -1,7 +1,7 @@
 import torch
 from collections import Counter
-from torch.nn import functional as F
-    
+from torch import nn
+import torch.nn.functional as F
         
 class Dataset(torch.utils.data.Dataset):
     def __init__(self,args):
@@ -22,6 +22,7 @@ class Dataset(torch.utils.data.Dataset):
             
             shakespeare_text = "".join(file.read().lower())
             
+
         return shakespeare_text
         
     def get_uniq_char(self):
@@ -42,22 +43,25 @@ class Dataset(torch.utils.data.Dataset):
         
         
         inpt = torch.tensor(self.char_index[index:index+self.args.sequence_length], dtype=torch.long)
-        target = torch.tensor(self.char_index[index+1:index+self.args.sequence_length+1], dtype=torch.long)
-
         
+        target = torch.tensor(self.char_index[index+1:index+self.args.sequence_length+1], dtype=torch.long)
+        
+
+            
         return (inpt, target)
 
 
 class Args():
-    def __init__(self, sequence_length):
+    def __init__(self, sequence_length, batch_size):
         self.sequence_length = sequence_length
+        self.batch_size = batch_size
         
-        
-args = Args(sequence_length=5)
+args = Args(sequence_length=100, batch_size=256)
 dtset = Dataset(args=args)
 
+args.batch_size
 
-dtset.__getitem__()
+dtset.__getitem__(-1)
 # dtset.__len__()
 dtset.get_uniq_char()
 # dtset.char_index[:20]
